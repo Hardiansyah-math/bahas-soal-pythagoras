@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentasi Matematika Interaktif (9 Soal) - SMP Negeri 1 Terusan Nunyai</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX untuk Rendering Matematika -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Font & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f1f5f9 100%);
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+        .bright-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+        }
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .slide.active {
+            display: block;
+            opacity: 1;
+        }
+        #canvas-board {
+            touch-action: none;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col justify-between select-none">
+
+    <!-- HEADER / IDENTITAS SEKOLAH -->
+    <header class="bright-card px-6 py-4 flex justify-between items-center z-10 border-b border-sky-100">
+        <div class="flex items-center space-x-4">
+            <div class="bg-gradient-to-tr from-blue-600 to-sky-400 text-white p-3 rounded-2xl font-black text-xl shadow-md shadow-sky-300/40">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-extrabold tracking-tight text-slate-800">SMP NEGERI 1 TERUSAN NUNYAI</h1>
+                <p class="text-xs text-sky-600 font-bold">Media Presentasi Matematika Interaktif (9 Soal Essay)</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-5">
+            <div class="text-right hidden md:block border-r border-slate-200 pr-5">
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Guru Pengampu</p>
+                <p class="text-sm font-bold text-sky-700">Hardiansyah, S.Pd.</p>
+            </div>
+            <button id="toggle-scratchpad" class="bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center space-x-2 shadow-sm">
+                <i class="fa-solid fa-pen-nib text-amber-500"></i>
+                <span class="hidden sm:inline">Papan Coretan</span>
+            </button>
+            <button id="btn-fullscreen" class="bg-white hover:bg-slate-50 text-slate-600 p-2.5 rounded-xl text-sm transition border border-slate-200 shadow-sm">
+                <i class="fa-solid fa-expand"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- SCRATCHPAD CANVAS OVERLAY -->
+    <div id="scratchpad-container" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex flex-col p-4">
+        <div class="flex justify-between items-center mb-2 bright-card p-3 rounded-2xl">
+            <div class="flex items-center space-x-4">
+                <span class="text-sm font-bold text-slate-800"><i class="fa-solid fa-pen-line mr-2 text-amber-500"></i>Papan Buraman / Coretan</span>
+                <input type="color" id="pen-color" value="#0284c7" class="w-8 h-8 rounded-lg border-0 cursor-pointer bg-transparent">
+                <input type="range" id="pen-size" min="1" max="10" value="3" class="w-24 accent-sky-600">
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="clear-canvas" class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm">Hapus Semua</button>
+                <button id="close-scratchpad" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold">Tutup</button>
+            </div>
+        </div>
+        <canvas id="canvas-board" class="w-full flex-grow bg-white rounded-2xl border border-slate-200 shadow-xl"></canvas>
+    </div>
+
+    <!-- MAIN SLIDE CONTAINER -->
+    <main class="flex-grow flex items-center justify-center p-4 md:p-8 overflow-y-auto">
+        <div class="w-full max-w-5xl">
+
+            <!-- SLIDE 1: JUDUL UTAMA -->
+            <div class="slide active">
+                <div class="bright-card p-10 md:p-14 rounded-3xl text-center relative overflow-hidden">
+                    <div class="absolute -top-12 -right-12 w-48 h-48 bg-sky-200/50 rounded-full blur-3xl"></div>
+                    <div class="absolute -bottom-12 -left-12 w-48 h-48 bg-emerald-200/50 rounded-full blur-3xl"></div>
+                    
+                    <span class="px-4 py-1.5 rounded-full text-xs font-bold tracking-widest text-sky-700 bg-sky-100 border border-sky-200 uppercase inline-block mb-4">Latihan & Pembahasan Lengkap</span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 leading-tight">Teorema Pythagoras & Trigonometri</h2>
+                    <p class="text-slate-600 max-w-2xl mx-auto mb-8 text-base md:text-lg font-medium">Pembahasan 9 Soal Essay Evaluasi Pembelajaran Kelas 8</p>
+
+                    <div class="inline-flex items-center space-x-3 bg-sky-50/80 px-6 py-3 rounded-2xl border border-sky-100 shadow-sm">
+                        <i class="fa-solid fa-user-tie text-sky-600 text-xl"></i>
+                        <div class="text-left">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Guru Pengampu</p>
+                            <p class="text-sm font-bold text-slate-800">Hardiansyah, S.Pd.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-10">
+                        <button onclick="changeSlide(1)" class="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-bold px-8 py-3.5 rounded-2xl shadow-lg shadow-sky-500/25 transition transform hover:-translate-y-0.5">
+                            Mulai Presentasi <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: SOAL 1 -->
+            <div class="slide">
+                <div class="bright-card p-8 rounded-3xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Soal Nomor 1</span>
+                        <span class="text-xs font-semibold text-slate-400">Segitiga Siku-siku Sama Kaki</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-6 leading-relaxed">
+                        Sebuah jendela rumah minimalis berbentuk segitiga siku-siku sama kaki dengan sudut $45^\circ-45^\circ-90^\circ$. Jika panjang salah satu sisi siku-sikunya adalah $18\text{ cm}$, hitunglah panjang sisi hipotenusa (sisi miring) dari jendela tersebut![cite: 1]
+                    </h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 items-center">
+                        <div class="bg-slate-50 p-6 rounded-2xl flex justify-center border border-slate-200/80">
+                            <svg width="200" height="160" viewBox="0 0 200 160">
+                                <polygon points="30,140 160,140 160,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="3" />
+                                <rect x="140" y="120" width="20" height="20" fill="none" stroke="#0284c7" stroke-width="2"/>
+                                <text x="95" y="158" fill="#334155" font-size="13" font-weight="600" text-anchor="middle">18 cm</text>
+                                <text x="170" y="80" fill="#334155" font-size="13" font-weight="600">18 cm</text>
+                                <text x="75" y="65" fill="#d97706" font-size="14" font-weight="bold">x cm?</text>
+                            </svg>
+                        </div>
+                        <div>
+                            <button onclick="toggleAnswer(1)" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold py-3.5 px-4 rounded-xl border border-sky-200 transition flex items-center justify-between">
+                                <span><i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i>Tampilkan Pembahasan</span>
+                                <i class="fa-solid fa-chevron-down" id="arrow-1"></i>
+                            </button>
+                            <div id="answer-1" class="hidden mt-4 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-slate-700 text-sm leading-relaxed shadow-sm">
+                                <p class="font-bold text-emerald-800 mb-2">Penyelesaian:</p>
+                                <p>Gunakan rasio perbandingan segitiga $45^\circ-45^\circ-90^\circ$ yaitu $1 : 1 : \sqrt{2}$.</p>
+                                <p class="mt-2 font-bold text-emerald-700">$$\text{Hipotenusa} = 18 \times \sqrt{2} = 18\sqrt{2}\text{ cm}$$</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: SOAL 2 -->
+            <div class="slide">
+                <div class="bright-card p-8 rounded-3xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Soal Nomor 2</span>
+                        <span class="text-xs font-semibold text-slate-400">Variasi Teorema Pythagoras[cite: 1]</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Tentukan nilai $x$ pada beberapa gambar berikut:[cite: 1]</h3>
+                    
+                    <div class="grid md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+                            <p class="text-xs text-sky-700 font-bold mb-2">a. Sisi Akar[cite: 1]</p>
+                            <svg width="130" height="90" viewBox="0 0 130 90" class="mx-auto">
+                                <polygon points="20,75 110,75 110,15" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                                <text x="65" y="88" fill="#334155" font-size="11" font-weight="600">5 cm</text>
+                                <text x="113" y="50" fill="#334155" font-size="11" font-weight="600">√7</text>
+                                <text x="45" y="40" fill="#d97706" font-size="11" font-weight="bold">x cm</text>
+                            </svg>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+                            <p class="text-xs text-sky-700 font-bold mb-2">b. Sisi Miring $x$[cite: 1]</p>
+                            <svg width="130" height="90" viewBox="0 0 130 90" class="mx-auto">
+                                <polygon points="20,75 110,75 110,15" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                                <text x="65" y="88" fill="#334155" font-size="11" font-weight="600">6 m</text>
+                                <text x="113" y="50" fill="#334155" font-size="11" font-weight="600">5 m</text>
+                                <text x="45" y="40" fill="#d97706" font-size="11" font-weight="bold">x m</text>
+                            </svg>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+                            <p class="text-xs text-sky-700 font-bold mb-2">c. Sisi Aljabar $x$[cite: 1]</p>
+                            <svg width="130" height="90" viewBox="0 0 130 90" class="mx-auto">
+                                <polygon points="20,75 110,75 110,15" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                                <text x="65" y="88" fill="#334155" font-size="11" font-weight="600">2x</text>
+                                <text x="113" y="50" fill="#334155" font-size="11" font-weight="600">√42</text>
+                                <text x="45" y="40" fill="#d97706" font-size="11" font-weight="bold">5x</text>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <button onclick="toggleAnswer(2)" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold py-3.5 px-4 rounded-xl border border-sky-200 transition flex items-center justify-between">
+                        <span><i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i>Tampilkan Pembahasan</span>
+                        <i class="fa-solid fa-chevron-down" id="arrow-2"></i>
+                    </button>
+                    <div id="answer-2" class="hidden mt-4 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-slate-700 text-sm space-y-2 shadow-sm">
+                        <p><strong>a.</strong> $x = \sqrt{5^2 + (\sqrt{7})^2} = \sqrt{25 + 7} = \sqrt{32} = 4\sqrt{2}\text{ cm}$</p>
+                        <p><strong>b.</strong> $x = \sqrt{6^2 + 5^2} = \sqrt{36 + 25} = \sqrt{61}\text{ m}$[cite: 1]</p>
+                        <p><strong>c.</strong> $(5x)^2 = (2x)^2 + (\sqrt{42})^2 \Rightarrow 25x^2 - 4x^2 = 42 \Rightarrow 21x^2 = 42 \Rightarrow x = \sqrt{2}$</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 4: SOAL 3 -->
+            <div class="slide">
+                <div class="bright-card p-8 rounded-3xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Soal Nomor 3</span>
+                        <span class="text-xs font-semibold text-slate-400">Mencari Sisi Siku-siku[cite: 1]</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-6 leading-relaxed">
+                        Diketahui segitiga $ABC$ siku-siku di $C$ dengan panjang sisi miring $AB = 15\sqrt{2}\text{ cm}$. Jika segitiga $ABC$ merupakan segitiga siku-siku sama kaki, tentukan panjang sisi $AC$![cite: 1]
+                    </h3>
+                    
+                    <button onclick="toggleAnswer(3)" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold py-3.5 px-4 rounded-xl border border-sky-200 transition flex items-center justify-between">
+                        <span><i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i>Tampilkan Pembahasan</span>
+                        <i class="fa-solid fa-chevron-down" id="arrow-3"></i>
+                    </button>
+                    <div id="answer-3" class="hidden mt-4 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-slate-700 text-sm leading-relaxed shadow-sm">
+                        <p class="font-bold text-emerald-800 mb-2">Penyelesaian:</p>
+                        <p>Karena segitiga siku-siku sama kaki, perbandingan $AC : BC : AB = 1 : 1 : \sqrt{2}$.[cite: 1]</p>
+                        <p class="mt-2">$$AC = \frac{AB}{\sqrt{2}} = \frac{15\sqrt{2}}{\sqrt{2}} = 15\text{ cm}$$</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: SOAL 4 -->
+            <div class="slide">
+                <div class="bright-card p-8 rounded-3xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Soal Nomor 4</span>
+                        <span class="text-xs font-semibold text-slate-400">Segitiga Istimewa $30^\circ-60^\circ-90^\circ$[cite: 1]</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-6 leading-relaxed">
+                        Pada segitiga $ABC$, besar $\angle B = 60^\circ$ dan $\angle A = 30^\circ$. Jika panjang sisi terpendek $BC = 12\text{ cm}$, hitunglah:[cite: 1]<br>
+                        a. Panjang sisi $AC$<br>
+                        b. Panjang sisi miring $AB$
+                    </h3>
+                    
+                    <button onclick="toggleAnswer(4)" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold py-3.5 px-4 rounded-xl border border-sky-200 transition flex items-center justify-between">
+                        <span><i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i>Tampilkan Pembahasan</span>
+                        <i class="fa-solid fa-chevron-down" id="arrow-4"></i>
+                    </button>
+                    <div id="answer-4" class="hidden mt-4 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-slate-700 text-sm space-y-2 shadow-sm">
+                        <p class="font-bold text-emerald-800">Rasio Perbandingan Sisi ($BC : AC : AB = 1 : \sqrt{3} : 2$):</p>
+                        <p><strong>a. Panjang AC:</strong> $$AC = BC \times \sqrt{3} = 12\sqrt{3}\text{ cm}$$</p>
+                        <p><strong>b. Panjang AB:</strong> $$AB = 2 \times BC = 2 \times 12 = 24\text{ cm}$$</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 6: SOAL 5 -->
+            <div class="slide">
+                <div class="bright-card p-8 rounded-3xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Soal Nomor 5</span>
+                        <span class="text-xs font-semibold text-slate-400">Luas Persegi Panjang[cite: 1]</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-6 leading-relaxed">
+                        Sudut yang dibentuk oleh diagonal sebuah persegi panjang dan sisi terpendeknya adalah $60^\circ$. Tentukan luas persegi panjang tersebut jika panjang diagonalnya $12\text{ cm}$![cite: 1]
+                    </h3>
+                    
+                    <button onclick="toggleAnswer(5)" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold py-3.5 px-4 rounded-xl border border-sky-200 transition flex items-center justify-between">
+                        <span><i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i>Tampilkan Pembahasan</span>
+                        <i class="fa-solid fa-chevron-down" id="arrow-5"></i>
+                    </button>
+                    <div id="answer-5" class="hidden mt-4 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-slate-700 text-sm space-y-2 shadow-sm">
+                        <p><strong>Panjang Sisi Terpendek ($p$):</strong> $p = 12 \times \sin 30^\circ = 12 \times 0{,}5 = 6\text{ cm}$</p>
+                        <p><strong>Panjang Sisi Terpanjang ($l$):</strong> $l = 12 \times \cos 30^\circ = 12 \times \frac{1}{2}\sqrt{3} = 6\sqrt{3}\text{ cm}$</p>
+                        <p class="font-bold text-emerald-800">$$\text{Luas} = p \times l = 6 \times 6\sqrt{3} = 36\sqrt{3}\text{ cm}^2$$</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 7: SOAL 6 -->
+            <div class="slide">
+                <div class="bright-card p-8 rounded-3xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Soal Nomor 6</span>
+                        <span class="text-xs font-semibold text-slate-400">Segitiga Sama Sisi[cite: 1]</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-6 leading-relaxed">
+                        Sebuah segitiga sama sisi $KLM$ mempunyai panjang sisi $10\text{ cm}$. Hitunglah tinggi segitiga tersebut dari alas hingga titik puncak serta luas segitiga $KLM$![cite: 1]
+                    </h3>
+                    
+                    <button onclick="toggleAnswer(6)" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold py-3.5 px-4 rounded-xl border border-sky-200 transition flex items-center justify-between">
+                        <span><i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i>Tampilkan Pembahasan</span>
+                        <i class="fa-solid fa-chevron-down" id="arrow-6"></i>
+                    </button>
+                    <div id="answer-6" class="hidden mt-4 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-slate-700 text-sm space-y-2 shadow-sm">
+                        <p><strong>Tinggi Segitiga ($t$):</strong> $$t = \sqrt{10^2 - 5^2} = \sqrt{100 - 25} = \sqrt{75} = 5\sqrt{3}\text{ cm}$$</p>
+                        <p><strong>Luas Segitiga:</strong> $$\text{Luas} = \frac{1}{2} \times \text{alas} \times \text{tinggi} = \frac{1}{2} \times 10 \times 5\sqrt{3} = 25\sqrt{3}\text{ cm}^2$$</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 8: SOAL 7 -->
+            <div class="slide">
+                <div class="bright-card p-8 rounded-3xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Soal Nomor 7</span>
+                        <span class="text-xs font-semibold text-slate-400">Helikopter Pengamat[cite: 1]</span>
+                    </div>
+                    <h3 class="text-lg md:text-xl font-bold text-slate-800 mb-4">
+                        Helikopter berada pada ketinggian $500\text{ m}$ di atas tanah. Helikopter mengamati objek A, B, dan C dengan sudut masing-masing $60^\circ$, $45^\circ$, dan $30^\circ$. Tentukan jarak OA, AB, dan BC![cite: 1]
+                    </h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 items-center">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex justify-center">
+                            <svg width="260" height="150" viewBox="0 0 260 150">
+                                <line x1="30" y1="20" x2="30" y2="130" stroke="#ef4444" stroke-width="2" stroke-dasharray="4"/>
+                                <text x="5" y="75" fill="#ef4444" font-size="11" font-weight="bold">500 m</text>
+                                <line x1="30" y1="130" x2="240" y2="130" stroke="#475569" stroke-width="2"/>
+                                <line x1="30" y1="20" x2="85" y2="130" stroke="#0284c7" stroke-width="2"/>
+                                <line x1="30" y1="20" x2="150" y2="130" stroke="#0284c7" stroke-width="2"/>
+                                <line x1="30" y1="20" x2="230" y2="130" stroke="#0284c7" stroke-width="2"/>
+                                <text x="25" y="145" fill="#0f172a" font-size="11" font-weight="bold">O</text>
+                                <text x="80" y="145" fill="#0f172a" font-size="11" font-weight="bold">A</text>
+                                <text x="145" y="145" fill="#0f172a" font-size="11" font-weight="bold">B</text>
+                                <text x="225" y="145" fill="#0f172a" font-size="11" font-weight="bold">C</text>
+                            </svg>
+                        </div>
+                        <div>
+                            <button onclick="toggleAnswer(7)" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold py-3.5 px-4 rounded-xl border border-sky-200 transition flex items-center justify-between">
+                                <span><i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i>Tampilkan Pembahasan</span>
+                                <i class="fa-solid fa-chevron-down" id="arrow-7"></i>
+                            </button>
+                            <div id="answer-7" class="hidden mt-4 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-slate-700 text-sm space-y-2 shadow-sm">
+                                <p><strong>a. Jarak OA:</strong> $OA = \frac{500}{\tan 60^\circ} = \frac{500\sqrt{3}}{3}\text{ m}$[cite: 1]</p>
+                                <p><strong>b. Jarak AB:</strong> $AB = 500 - \frac{500\sqrt{3}}{3}\text{ m}$[cite: 1]</p>
+                                <p><strong>c. Jarak BC:</strong> $BC = 500\sqrt{3} - 500 = 500(\sqrt{3} - 1)\text{ m}$[cite: 1]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 9: SOAL 8 -->
+            <div class="slide">
+                <div class="bright-card p-8 rounded-3xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Soal Nomor 8</span>
+                        <span class="text-xs font-semibold text-slate-400">Hiasan Dinding Segitiga[cite: 1]</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-6 leading-relaxed">
+                        Pengrajin kayu akan membuat hiasan dinding berbentuk segitiga siku-siku dengan salah satu sudutnya $30^\circ$. Panjang sisi di depan sudut $30^\circ$ adalah $60\text{ cm}$. Tentukan panjang hipotenusanya![cite: 1]
+                    </h3>
+                    
+                    <button onclick="toggleAnswer(8)" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold py-3.5 px-4 rounded-xl border border-sky-200 transition flex items-center justify-between">
+                        <span><i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i>Tampilkan Pembahasan</span>
+                        <i class="fa-solid fa-chevron-down" id="arrow-8"></i>
+                    </button>
+                    <div id="answer-8" class="hidden mt-4 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-slate-700 text-sm leading-relaxed shadow-sm">
+                        <p class="font-bold text-emerald-800 mb-2">Penyelesaian:</p>
+                        <p>Sisi di depan sudut $30^\circ$ memiliki perbandingan $1$ terhadap hipotenusa yang memiliki perbandingan $2$.[cite: 1]</p>
+                        <p class="mt-2 font-bold text-emerald-700">$$\text{Panjang Hipotenusa} = 2 \times 60 = 120\text{ cm}$$</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 10: SOAL 9 -->
+            <div class="slide">
+                <div class="bright-card p-8 rounded-3xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Soal Nomor 9</span>
+                        <span class="text-xs font-semibold text-slate-400">Aplikasi Tangga & Tembok[cite: 2]</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-6 leading-relaxed">
+                        Diketahui suatu tangga disandarkan pada tembok. Titik ujung dan pangkal tangga masing-masing $A$ dan $B$. Jika ujung tangga ($A$) terhadap tembok adalah $160\text{ cm}$ dan panjang tangga $200\text{ cm}$, tentukan tinggi tembok tersebut (dalam meter)![cite: 2]
+                    </h3>
+                    
+                    <button onclick="toggleAnswer(9)" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold py-3.5 px-4 rounded-xl border border-sky-200 transition flex items-center justify-between">
+                        <span><i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i>Tampilkan Pembahasan</span>
+                        <i class="fa-solid fa-chevron-down" id="arrow-9"></i>
+                    </button>
+                    <div id="answer-9" class="hidden mt-4 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-slate-700 text-sm leading-relaxed shadow-sm">
+                        <p class="font-bold text-emerald-800 mb-2">Penyelesaian:</p>
+                        <p>$$\text{Tinggi Tembok} = \sqrt{200^2 - 160^2} = \sqrt{40000 - 25600} = \sqrt{14400} = 120\text{ cm}$$[cite: 2]</p>
+                        <p class="mt-2 font-bold text-emerald-700">$$\text{Konversi ke meter} = 120\text{ cm} = 1{,}2\text{ meter}$$[cite: 2]</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 11: PENUTUP -->
+            <div class="slide">
+                <div class="bright-card p-12 rounded-3xl text-center">
+                    <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-md border border-emerald-200">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h2 class="text-3xl font-extrabold text-slate-900 mb-3">Selesai & Terima Kasih</h2>
+                    <p class="text-slate-600 max-w-md mx-auto mb-8 font-medium">Seluruh 9 nomor soal telah selesai dibahas. Semoga bermanfaat untuk pembelajaran matematika di kelas.</p>
+                    <div class="inline-block bg-sky-50 border border-sky-200 px-6 py-3 rounded-2xl">
+                        <p class="text-sm font-extrabold text-sky-800">SMP NEGERI 1 TERUSAN NUNYAI</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Guru Pengampu: Hardiansyah, S.Pd.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER / NAVIGASI SLIDE -->
+    <footer class="bright-card px-6 py-4 border-t border-sky-100 flex justify-between items-center z-10">
+        <button id="btn-prev" onclick="changeSlide(-1)" class="bg-white hover:bg-slate-50 disabled:opacity-40 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center space-x-2 border border-slate-200 shadow-sm">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Sebelumnya</span>
+        </button>
+
+        <div class="flex items-center space-x-1.5 overflow-x-auto py-1" id="slide-indicators"></div>
+
+        <button id="btn-next" onclick="changeSlide(1)" class="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 disabled:opacity-40 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center space-x-2 shadow-md shadow-sky-500/20">
+            <span>Selanjutnya</span>
+            <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </footer>
+
+    <!-- SCRIPT LOGIKA -->
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const indicatorContainer = document.getElementById('slide-indicators');
+
+        slides.forEach((_, idx) => {
+            const dot = document.createElement('button');
+            dot.className = `h-2 rounded-full transition-all ${idx === 0 ? 'bg-sky-500 w-6' : 'bg-slate-300 w-2'}`;
+            dot.onclick = () => goToSlide(idx);
+            indicatorContainer.appendChild(dot);
+        });
+
+        function updateSlideUI() {
+            slides.forEach((slide, idx) => {
+                slide.classList.toggle('active', idx === currentSlide);
+            });
+            
+            const dots = indicatorContainer.children;
+            Array.from(dots).forEach((dot, idx) => {
+                if (idx === currentSlide) {
+                    dot.className = 'w-6 h-2 bg-sky-500 rounded-full transition-all';
+                } else {
+                    dot.className = 'w-2 h-2 bg-slate-300 rounded-full transition-all';
+                }
+            });
+
+            document.getElementById('btn-prev').disabled = (currentSlide === 0);
+            document.getElementById('btn-next').disabled = (currentSlide === slides.length - 1);
+        }
+
+        function changeSlide(direction) {
+            currentSlide = Math.max(0, Math.min(slides.length - 1, currentSlide + direction));
+            updateSlideUI();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlideUI();
+        }
+
+        function toggleAnswer(id) {
+            const el = document.getElementById(`answer-${id}`);
+            const arrow = document.getElementById(`arrow-${id}`);
+            el.classList.toggle('hidden');
+            arrow.classList.toggle('rotate-180');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') changeSlide(1);
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+        });
+
+        document.getElementById('btn-fullscreen').addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        // Scratchpad / Canvas
+        const scratchpad = document.getElementById('scratchpad-container');
+        const canvas = document.getElementById('canvas-board');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+
+        document.getElementById('toggle-scratchpad').onclick = () => {
+            scratchpad.classList.remove('hidden');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        };
+        document.getElementById('close-scratchpad').onclick = () => scratchpad.classList.add('hidden');
+        document.getElementById('clear-canvas').onclick = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            ctx.beginPath();
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            ctx.moveTo(x, y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = document.getElementById('pen-color').value;
+            ctx.lineWidth = document.getElementById('pen-size').value;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+
+        function stopDrawing() { isDrawing = false; }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ]
+            });
+            updateSlideUI();
+        });
+    </script>
+</body>
+</html>
